@@ -148,7 +148,7 @@ ssh <name-of-your-server>
 
 sudo apt-get install iptables
 sudo mkdir /usr/local/scripts
-sudo cp ~/events/config/fw /usr/local/scripts
+sudo cp ~/rails-on-ubuntu/config/fw /usr/local/scripts
 # Edit the firewall config and change <your-ssh-port> to reflect your ssh port
 sudo emacs /usr/local/scripts/fw
 sudo /sbin/iptables-restore < /usr/local/scripts/fw

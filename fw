@@ -1,0 +1,60 @@
+*mangle
+:PREROUTING ACCEPT [444:43563]
+:INPUT ACCEPT [444:43563]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [402:144198]
+:POSTROUTING ACCEPT [402:144198]
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,PSH,URG -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,PSH,URG -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,PSH,URG -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,PSH,URG -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
+COMMIT
+
+*filter
+:INPUT DROP [1:242]
+:FORWARD DROP [0:0]
+:OUTPUT DROP [0:0]
+:LOG_DROP - [0:0]
+:LOG_ACCEPT - [0:0]
+:icmp_packets - [0:0]
+
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p tcp -m tcp --dport <your-ssh-port> -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+-A INPUT -s 127.0.0.1 -j ACCEPT
+-A INPUT -p icmp -j icmp_packets
+-A INPUT -j LOG_DROP
+
+-A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 20 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 21 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 22 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 23 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 25 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 43 -j ACCEPT
+-A OUTPUT -p udp -m udp --dport 43 -j ACCEPT
+-A OUTPUT -p udp -m udp --dport 53 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 80 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 110 -j ACCEPT 
+-A OUTPUT -p tcp -m tcp --dport 143 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 443 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 993 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 3306 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 9418 -j ACCEPT
+-A OUTPUT -d 127.0.0.1 -j ACCEPT
+-A OUTPUT -p icmp -j icmp_packets
+-A OUTPUT -j LOG_DROP
+COMMIT
