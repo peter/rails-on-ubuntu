@@ -99,7 +99,69 @@ sudo apt-get install build-essential man
 sudo apt-get install git-core
 
 ############################
-# Setup deploy user environment
+# Setup deploy User Environment
 ############################
+
+cd
+git clone git://github.com/peter/rails-on-ubuntu.git
+mv .bashrc .bashrc.orig
+ln -s rails-on-ubuntu/.bashrc
+source ~/.bashrc
+ln -s rails-on-ubuntu/.emacs
+
+############################
+# Set the Timezone and Keep the Time Synced
+############################
+
+sudo dpkg-reconfigure tzdata
+# Check time is correct
+date
+sudo apt-get install ntp
+
+############################
+# Set the hostname
+############################
+
+sudo hostname your-hostname
+sudo emacs /etc/hostname
+sudo emacs /etc/hosts
+# Check hostname is correct
+hostname
+
+############################
+# Change ssh to run on non-standard port
+############################
+
+# Choose some unused port number (not 80 or 443) between 1024 and below 65537
+# Make sure to make a note of the number.
+sudo emacs /etc/ssh/sshd_config
+sudo /etc/init.d/ssh restart
+exit
+# Add to the section for your server in ~/.ssh/config:
+# Port = <your-port-number>
+ssh <name-of-your-server>
+
+############################
+# Configure a firewall that only allows incoming http, https, and ssh traffic
+# (remembering that ssh port was changed)
+############################
+
+sudo apt-get install iptables
+sudo mkdir /usr/local/scripts
+sudo cp ~/events/config/fw /usr/local/scripts
+# Edit the firewall config and change <your-ssh-port> to reflect your ssh port
+sudo emacs /usr/local/scripts/fw
+sudo /sbin/iptables-restore < /usr/local/scripts/fw
+# Test the firewall
+exit
+telnet 79.99.2.10 some-port-that-should-not-be-open
+telnet 79.99.2.10 your-ssh-port
+ssh <name-of-your-server>
+
+
+
+
+
+
 
 ... TO BE CONTINUED ...
