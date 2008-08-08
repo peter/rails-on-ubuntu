@@ -1,0 +1,25 @@
+
+###################################################################
+#
+# INTRODUCTION
+#
+###################################################################
+
+What follows is the steps I went through when installing Ruby on Rails on Ubuntu 8.04 Hardy Heron on a Gold VPS at the swedish hosting company GleSYS.se. The VPS has 1 GB of memory and 100 GB of disk space (see http://glesys.se/serverhotell/vps). I would like to thanks the kind folks at GleSYS for awesome support and for providing excellent hosting!
+
+Those instructions assume familiarity with Ruby on Rails, Capistrano, Mongrel, MySQL, and Linux. They draw heavily on the excellent book "Deploying Rails Applications" by Ezra Zygmuntowicz. I strongly encourage you to check out the book if you haven't already. Like with all Pragmatic Bookshelf books, the book can be conveniently downloaded as a PDF.
+
+###################################################################
+#
+# BASIC SERVER SETUP
+#
+###################################################################
+
+############################
+# Change Root Password
+############################
+
+ssh root@<server-ip-number>
+passwd
+
+... TO BE CONTINUED SOON ...
