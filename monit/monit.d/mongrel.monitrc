@@ -1,0 +1,44 @@
+check process mongrel_8000
+  with pidfile
+  /var/www/apps/my_app/current/tmp/pids/mongrel.8000.pid
+  start program = "/usr/bin/mongrel_rails cluster::start -C
+  /var/www/apps/my_app/current/config/mongrel_cluster.yml
+  --clean --only 8000"
+  stop program = "/usr/bin/mongrel_rails cluster::stop -C
+  /var/www/apps/my_app/current/config/mongrel_cluster.yml
+  --only 8000"
+  if totalmem is greater than 80.0 MB for 4 cycles then restart
+  if cpu is greater than 80% for 4 cycles then restart
+  if 20 restarts within 20 cycles then timeout
+  if failed port 8000 protocol http with timeout 10 seconds then restart
+  group mongrel
+
+check process mongrel_8001
+  with pidfile
+  /var/www/apps/my_app/current/tmp/pids/mongrel.8001.pid
+  start program = "/usr/bin/mongrel_rails cluster::start -C
+  /var/www/apps/my_app/current/config/mongrel_cluster.yml
+  --clean --only 8001"
+  stop program = "/usr/bin/mongrel_rails cluster::stop -C
+  /var/www/apps/my_app/current/config/mongrel_cluster.yml
+  --only 8001"
+  if totalmem is greater than 80.0 MB for 4 cycles then restart
+  if cpu is greater than 80% for 4 cycles then restart
+  if 20 restarts within 20 cycles then timeout
+  if failed port 8001 protocol http with timeout 10 seconds then restart
+  group mongrel
+
+check process mongrel_8002
+  with pidfile
+  /var/www/apps/my_app/current/tmp/pids/mongrel.8002.pid
+  start program = "/usr/bin/mongrel_rails cluster::start -C
+  /var/www/apps/my_app/current/config/mongrel_cluster.yml
+  --clean --only 8002"
+  stop program = "/usr/bin/mongrel_rails cluster::stop -C
+  /var/www/apps/my_app/current/config/mongrel_cluster.yml
+  --only 8002"
+  if totalmem is greater than 80.0 MB for 4 cycles then restart
+  if cpu is greater than 80% for 4 cycles then restart
+  if 20 restarts within 20 cycles then timeout
+  if failed port 8002 protocol http with timeout 10 seconds then restart
+  group mongrel

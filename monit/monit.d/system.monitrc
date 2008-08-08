@@ -1,0 +1,7 @@
+check system simplesignup.se
+  if loadavg (1min) > 4 then alert
+  if loadavg (5min) > 2 then alert
+  if memory usage > 70% then alert
+
+check device rootfs with path /dev/simfs
+  if space usage > 40% 5 times within 15 cycles then alert

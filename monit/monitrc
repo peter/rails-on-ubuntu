@@ -1,0 +1,9 @@
+set daemon 30
+set logfile syslog facility log_daemon
+set mailserver localhost
+set mail-format {from:<your-email>}
+set alert <your-email> only on { timeout, nonexist, resource, connection, size, match }
+set httpd port 9111
+  allow localhost
+
+include /etc/monit.d/*.monitrc

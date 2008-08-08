@@ -223,5 +223,21 @@ sudo make install
 which nginx
 #=> /usr/local/nginx/sbin/nginx
 
+# Install Postfix so we can send SMTP from localhost
+sudo apt-get install postfix
+
+# Monit - install, configure, and start
+sudo apt-get install monit
+sudo cp ~/rails-on-ubuntu/monit/monitrc /etc/monit
+sudo chmod 700 /etc/monit/monitrc
+sudo cp -r ~/rails-on-ubuntu/monit/monit.d /etc
+sudo mv /etc/monit.d/haproxy.monitrc /etc/monit.d/haproxy.monitrc.bak
+# Changed memory usage threshold to 90% on staging
+sudo emacs /etc/monit.d/system.monitrc
+# Change to startup=1
+sudo emacs /etc/default/monit
+sudo /etc/init.d/monit start
+sudo monit status
+
 
 ... TO BE CONTINUED ...
