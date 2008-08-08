@@ -9,7 +9,7 @@ What follows is the steps I went through when installing Ruby on Rails on Ubuntu
 
 Those instructions assume familiarity with tools such as Linux, ssh, Ruby on Rails, Capistrano, Mongrel, and MySQL. They draw heavily on the excellent book "Deploying Rails Applications" by Ezra Zygmuntowicz. I strongly encourage you to check out the book if you haven't already. Like with all Pragmatic Bookshelf books, it can be conveniently downloaded as a PDF.
 
-TODO: say something about what the technology stack looks like
+TODO: say something about what the resulting technology stack looks like:
 
 mysql --version
 nginx --version # compiled with fair proxy balancer
@@ -132,7 +132,7 @@ hostname
 # Change ssh to run on non-standard port
 ############################
 
-# Choose some unused port number (not 80 or 443) between 1024 and below 65537
+# Choose some unused port number such as 7243 (not 80 or 443) between 1024 and below 65537
 # Make sure to make a note of the number.
 sudo emacs /etc/ssh/sshd_config
 sudo /etc/init.d/ssh restart
@@ -231,13 +231,28 @@ sudo apt-get install monit
 sudo cp ~/rails-on-ubuntu/monit/monitrc /etc/monit
 sudo chmod 700 /etc/monit/monitrc
 sudo cp -r ~/rails-on-ubuntu/monit/monit.d /etc
-sudo mv /etc/monit.d/haproxy.monitrc /etc/monit.d/haproxy.monitrc.bak
-# Changed memory usage threshold to 90% on staging
-sudo emacs /etc/monit.d/system.monitrc
+# Replace <your-email> with your email address
+sudo emacs /etc/monit/monitrc
+# Replace my_app with the name of your app
+sudo emacs /etc/monit.d/mongrel.monitrc 
+# Review the files under /etc/monit.d and make sure you understand the settings and that
+# they are appropriate for your server.
 # Change to startup=1
 sudo emacs /etc/default/monit
 sudo /etc/init.d/monit start
 sudo monit status
 
+# Setup directory where your Rails app will be deployed to on the server
+sudo mkdir -p /var/www/apps
+sudo chown deploy.deploy /var/www/apps
+
+# Setup the Capistrano file structure from your local machine
+exit
+cd <path-to-your-local-rails-app>
+# If you haven't capified your up, run "capify ."
+# There is an example app here: http://svn.marklunds.com/my_app/
+# Edit config/deploy.rb, for an example, see:
+# http://svn.marklunds.com/my_app/config/deploy.rb
+cap deploy:setup
 
 ... TO BE CONTINUED ...
