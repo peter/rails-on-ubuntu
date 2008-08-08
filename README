@@ -5,9 +5,17 @@
 #
 ###################################################################
 
-What follows is the steps I went through when installing Ruby on Rails on Ubuntu 8.04 Hardy Heron on a Gold VPS at the swedish hosting company GleSYS.se. The VPS has 1 GB of memory and 100 GB of disk space (see http://glesys.se/serverhotell/vps). I would like to thanks the kind folks at GleSYS for awesome support and for providing excellent hosting!
+What follows is the steps I went through when installing Ruby on Rails on Ubuntu 8.04 Hardy Heron on a Gold VPS at the swedish hosting company GleSYS.se. The VPS has 1 GB of memory and 100 GB of disk space (see http://glesys.se/serverhotell/vps). I would like to thanks the kind folks at GleSYS for awesome support and for providing excellent hosting.
 
-Those instructions assume familiarity with Ruby on Rails, Capistrano, Mongrel, MySQL, and Linux. They draw heavily on the excellent book "Deploying Rails Applications" by Ezra Zygmuntowicz. I strongly encourage you to check out the book if you haven't already. Like with all Pragmatic Bookshelf books, the book can be conveniently downloaded as a PDF.
+Those instructions assume familiarity with tools such as Linux, ssh, Ruby on Rails, Capistrano, Mongrel, and MySQL. They draw heavily on the excellent book "Deploying Rails Applications" by Ezra Zygmuntowicz. I strongly encourage you to check out the book if you haven't already. Like with all Pragmatic Bookshelf books, it can be conveniently downloaded as a PDF.
+
+TODO: say something about what the technology stack looks like
+
+mysql --version
+nginx --version # compiled with fair proxy balancer
+monit --version
+ruby --version
+gem --version
 
 ###################################################################
 #
@@ -22,4 +30,76 @@ Those instructions assume familiarity with Ruby on Rails, Capistrano, Mongrel, M
 ssh root@<server-ip-number>
 passwd
 
-... TO BE CONTINUED SOON ...
+############################
+# Install Editor (Optional)
+############################
+
+apt-get install emacs22
+export EDITOR=emacs
+
+############################
+# Add the Rails Deploy User
+############################
+
+adduser deploy
+# Give deploy sudo access
+adduser deploy sudo
+# Uncomment sudo group line
+visudo
+
+############################
+# Setup ssh keys
+############################
+
+su deploy
+ssh-keygen
+exit
+exit
+
+# Locally - add your server to .ssh/config
+Host = <name-of-your-server>
+Hostname = <server-ip-number-or-domain>
+User = deploy
+
+# Convenient function for adding ssh keys, you can add it to your ~/.bashrc
+function authme {
+    ssh $1 'cat >>.ssh/authorized_keys' <~/.ssh/id_rsa.pub
+}
+source ~/.bashrc
+
+authme <name-of-your-server>
+# You should now be able to login without password
+ssh <name-of-your-server>
+
+############################
+# Upgrade packages
+############################
+
+# Check out which apt-get sources you are dealing with
+cat /etc/apt/sources.list
+# You might want to add hardy-security so that the file becomes:
+# deb http://archive.ubuntu.com/ubuntu/ hardy main restricted universe
+# deb http://archive.ubuntu.com/ubuntu/ hardy-updates main restricted universe
+# deb http://security.ubuntu.com/ubuntu hardy-security main restricted universe
+
+# Update
+sudo apt-get update
+sudo apt-get upgrade
+
+############################
+# Install essential tools
+############################
+
+sudo apt-get install build-essential man
+
+############################
+# Install Git
+############################
+
+sudo apt-get install git-core
+
+############################
+# Setup deploy user environment
+############################
+
+... TO BE CONTINUED ...
