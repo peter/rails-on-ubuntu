@@ -256,6 +256,12 @@ sudo emacs /etc/default/monit
 sudo /etc/init.d/monit start
 sudo monit status
 
+###################################################################
+#
+# DEPLOYMENT
+#
+###################################################################
+
 # Setup directory where your Rails app will be deployed to on the server
 sudo mkdir -p /var/www/apps
 sudo chown deploy.deploy /var/www/apps
@@ -280,6 +286,14 @@ mysqladmin -u root -pglr2008 create my_app_production
 # Deploy cold from your local machine
 exit
 cd <path-to-your-local-rails-app>
+# Add a file to your scm at config/mongrel_cluster.yml, see:
+# http://svn.marklunds.com/my_app/config/mongrel_cluster.yml
 cap deploy:cold
 
-... TO BE CONTINUED ...
+Hit http://<your-server-ip-or-domain> in your browser.
+
+Good luck!
+
+Peter Marklund
+Friday, August 8, 2008
+Stockholm
