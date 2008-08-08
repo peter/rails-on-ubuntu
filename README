@@ -148,20 +148,80 @@ ssh <name-of-your-server>
 
 sudo apt-get install iptables
 sudo mkdir /usr/local/scripts
-sudo cp ~/rails-on-ubuntu/config/fw /usr/local/scripts
+sudo cp ~/rails-on-ubuntu/fw /usr/local/scripts
 # Edit the firewall config and change <your-ssh-port> to reflect your ssh port
 sudo emacs /usr/local/scripts/fw
 sudo /sbin/iptables-restore < /usr/local/scripts/fw
 # Test the firewall
 exit
-telnet 79.99.2.10 some-port-that-should-not-be-open
-telnet 79.99.2.10 your-ssh-port
+telnet <ip-of-your-server> <standard-ssh-port>
+telnet <ip-of-your-server> <your-ssh-port>
 ssh <name-of-your-server>
 
+###################################################################
+#
+# RUBY ON RAILS STACK
+#
+###################################################################
 
+# Install Ruby
+sudo apt-get install ruby-full
+# Check that Ruby is there
+which ruby
+#=> /usr/bin/ruby
+ruby -v
+#=> ruby 1.8.6 (2007-09-24 patchlevel 111) [i486-linux]
+ruby -ropenssl -rzlib -rreadline -e "puts :success"
+#=> success
 
+# Install RubyGems
+cd /usr/local/src
+# Get latest stable recommended release of RubyGems from rubygems.org
+sudo wget http://rubyforge.org/frs/download.php/38646/rubygems-1.2.0.tgz
+sudo tar xzf rubygems-1.2.0.tgz
+cd rubygems-1.2.0
+sudo ruby setup.rb
+sudo ln -s /usr/bin/gem1.8 /usr/bin/gem
+which gem
+#=> /usr/bin/gem
+gem --version
+#=> 1.2.0
 
+# Install MySQL
+sudo aptitude install mysql-server mysql-client libmysqlclient15-dev
+# Check mysql is there
+which mysql
+#=> /usr/bin/mysql
+mysql --version
+#=> mysql  Ver 14.12 Distrib 5.0.51a, for debian-linux-gnu (i486) using readline 5.2
+mysql
+show databases;
+exit
 
+# Install MySQL C Driver for Ruby
+sudo apt-get install make
+sudo gem install mysql
+
+# Install a few gems used in Rails deployment
+sudo gem install rake rails capistrano mongrel_cluster
+
+# Install Subversion (not everyone uses Git, yet)
+sudo apt-get install subversion subversion-tools
+
+# Install Nginx with Fair Proxy Balancer
+sudo apt-get install libpcre3-dev libpcre3 openssl libssl-dev
+cd /usr/local/src
+sudo wget http://sysoev.ru/nginx/nginx-0.6.31.tar.gz
+sudo tar xzvf nginx-0.6.31.tar.gz
+sudo cp -r ~/rails-on-ubuntu/nginx-upstream-fair .
+# If you want to live on the edge and get the latest nginx-upstream-fair, then use:
+# sudo git clone git://github.com/gnosek/nginx-upstream-fair.git
+cd nginx-0.6.31
+sudo ./configure --with-http_ssl_module --add-module=/usr/local/src/nginx-upstream-fair
+sudo make
+sudo make install
+which nginx
+#=> /usr/local/nginx/sbin/nginx
 
 
 ... TO BE CONTINUED ...
