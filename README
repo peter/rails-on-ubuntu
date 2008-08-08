@@ -232,6 +232,14 @@ which nginx
 # Install Postfix so we can send SMTP from localhost
 sudo apt-get install postfix
 
+# Configure Nginx and start it
+sudo cp ~/rails-on-ubuntu/nginx/nginx.conf /usr/local/nginx/conf
+sudo cp -r ~/rails-on-ubuntu/nginx/vhosts /usr/local/nginx/conf
+sudo cp ~/rails-on-ubuntu/nginx/nginx.init /etc/init.d/nginx
+sudo chmod +x /etc/init.d/nginx
+sudo /usr/sbin/update-rc.d -f nginx defaults
+sudo /etc/init.d/nginx start
+
 # Monit - install, configure, and start
 sudo apt-get install monit
 sudo cp ~/rails-on-ubuntu/monit/monitrc /etc/monit
@@ -265,8 +273,13 @@ cap deploy:setup
 ssh <name-of-your-server>
 sudo /etc/init.d/mysql stop
 sudo cp /etc/mysql/my.cnf /etc/mysql/my.cnf.orig
-sudo cp ~/rails-on-ubuntu/my.cnf /etc/mysql/my.cnf
+sudo cp ~/rails-on-ubuntu/my.cnf /etc/mysql
 sudo /etc/init.d/mysql start
-mysqladmin -u root -pilwwsh2008 create my_app_production
+mysqladmin -u root -pglr2008 create my_app_production
+
+# Deploy cold from your local machine
+exit
+cd <path-to-your-local-rails-app>
+cap deploy:cold
 
 ... TO BE CONTINUED ...
