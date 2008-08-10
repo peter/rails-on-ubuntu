@@ -21,6 +21,11 @@ Make sure you fully understand the instructions as you go through them step by s
 
 If you find mistakes or have suggestions for improvement, please get in touch with me at peter@marklunds.com.
 
+Peter Marklund
+Friday, August 10, 2008
+Stockholm
+http://marklunds.com
+
 ###################################################################
 #
 # BASIC SERVER SETUP
@@ -56,6 +61,7 @@ visudo
 ############################
 
 su deploy
+# Press enter three times
 ssh-keygen
 exit
 exit
@@ -80,7 +86,7 @@ ssh <name-of-your-server>
 ############################
 
 # Check out which apt-get sources you are dealing with
-cat /etc/apt/sources.list
+sudo emacs /etc/apt/sources.list
 # You might want to add hardy-security so that the file becomes:
 # deb http://archive.ubuntu.com/ubuntu/ hardy main restricted universe
 # deb http://archive.ubuntu.com/ubuntu/ hardy-updates main restricted universe
@@ -100,10 +106,8 @@ sudo apt-get install build-essential man
 # Install Git and Subversion
 ############################
 
-sudo apt-get install git-core
-
-# Install Subversion (not everyone uses Git, yet)
-sudo apt-get install subversion subversion-tools
+# We include Subversion since not everyone uses Git, yet, you know
+sudo apt-get install git-core subversion subversion-tools
 
 ############################
 # Setup deploy User Environment
@@ -112,9 +116,9 @@ sudo apt-get install subversion subversion-tools
 cd
 git clone git://github.com/peter/rails-on-ubuntu.git
 mv .bashrc .bashrc.orig
-ln -s rails-on-ubuntu/.bashrc
+cp rails-on-ubuntu/.bashrc .
 source ~/.bashrc
-ln -s rails-on-ubuntu/.emacs
+cp rails-on-ubuntu/.emacs .
 
 ############################
 # Set the Timezone and Keep the Time Synced
@@ -156,13 +160,17 @@ ssh <name-of-your-server>
 sudo apt-get install iptables
 sudo mkdir /usr/local/scripts
 sudo cp ~/rails-on-ubuntu/fw /usr/local/scripts
-# Edit the firewall config and change <your-ssh-port> to reflect your ssh port
+# Edit the firewall config and change <your-ssh-port> to your port number
 sudo emacs /usr/local/scripts/fw
 sudo /sbin/iptables-restore < /usr/local/scripts/fw
 # Test the firewall
 exit
-telnet <ip-of-your-server> <standard-ssh-port>
+# Should not be able to connect to default port
+telnet <ip-of-your-server> 22
+# Should be able to connect this time
 telnet <ip-of-your-server> <your-ssh-port>
+# Note: if you have locked yourself out of your server at GleSYS#
+# you can reset the firewall in the web admin panel.
 ssh <name-of-your-server>
 
 ###################################################################
@@ -218,8 +226,9 @@ show databases;
 exit
 
 # Install MySQL C Driver for Ruby
-sudo apt-get install make
 sudo gem install mysql
+# NOTE: if you have issues compiling the MySQL driver related to make, try:
+# sudo apt-get install make
 
 ############################
 # Ruby Gems that we Need
@@ -259,7 +268,8 @@ sudo /etc/init.d/nginx start
 # Sending SMTP from localhost
 ############################
 
-# Install Postfix so we can send SMTP from localhost
+# Install Postfix so we can send SMTP from localhost.
+# You can get away with accepting the defaults during install.
 sudo apt-get install postfix
 
 ############################
@@ -300,10 +310,14 @@ sudo chown deploy.deploy /var/www/apps
 exit
 cd <path-to-your-local-rails-app>
 # If you haven't capified your up, run "capify ."
+# If you don't have Capistrano: sudo gem install capistrano
 # There is an example app here: http://svn.marklunds.com/my_app/
 # Edit config/deploy.rb, for an example, see:
 # http://svn.marklunds.com/my_app/config/deploy.rb
 cap deploy:setup
+# Capistrano sets up the files as root, however later we need to access them as the deploy
+# user. Change ownership to the deploy user:
+cap invoke COMMAND="sudo chown -R deploy.deploy /var/www/apps/my_app"
 
 ############################
 # Setup the database
@@ -315,7 +329,7 @@ sudo /etc/init.d/mysql stop
 sudo cp /etc/mysql/my.cnf /etc/mysql/my.cnf.orig
 sudo cp ~/rails-on-ubuntu/my.cnf /etc/mysql
 sudo /etc/init.d/mysql start
-mysqladmin -u root -pglr2008 create my_app_production
+mysqladmin -u root -p<mysql-password> create my_app_production
 
 ############################
 # Deploy
@@ -331,7 +345,3 @@ cap deploy:cold
 Hit http://<your-server-ip-or-domain> in your browser.
 
 Good luck!
-
-Peter Marklund
-Friday, August 10, 2008
-Stockholm
