@@ -5,23 +5,21 @@
 #
 ###################################################################
 
-What follows is the steps I went through when installing Ruby on Rails on Ubuntu 8.04 Hardy Heron on a Gold VPS at the swedish hosting company GleSYS.se. The VPS has 1 GB of memory and 100 GB of disk space (see http://glesys.se/serverhotell/vps). I would like to this opportunity to thank the kind folks at GleSYS for their awesome support and excellent hosting.
+What you are looking at is detailed instructions for setting up a Ruby on Rails production environment on Ubuntu 8.04 Hardy Heron. The instructions have primarily been tested on a Gold VPS at the swedish hosting company GleSYS.se (see http://glesys.se/serverhotell/vps). I would like to take this opportunity to thank the kind folks at GleSYS for supporting me in this project and for providing me with excellent hosting. The instructions are generic and should work on any clean Ubuntu 8.04 install. They have been tested successfully at http://slicehost.com as well.
 
 The instructions assume familiarity with tools such as Linux, ssh, Ruby on Rails, Capistrano, Mongrel, and MySQL. They draw heavily on the excellent book "Deploying Rails Applications" by Ezra Zygmuntowicz. I strongly encourage you to check out the book if you haven't already. Like with all Pragmatic Bookshelf books, it can be conveniently downloaded as a PDF.
 
-TODO: say something about what the resulting technology stack looks like:
+As of August the 10:th 2008, the instructions install the following versions of the technology stack:
 
-mysql --version
-nginx --version # compiled with fair proxy balancer
-monit --version
-ruby --version
-gem --version
+mysql 5.0.51a
+nginx 0.6.31 (compiled with fair proxy balancer)
+monit 4.8.1
+ruby 1.8.6, patchlevel 111
+gem 1.2.0
 
-# TODO: image
-# change deploy password
-# change mysql password
-# change hostname
-# change monit scripts
+Make sure you fully understand the instructions as you go through them step by step. Also, in the end, don't forget to customize the config files to fit your needs, especially the Nginx, Monit, and Mongrel Cluster ones.
+
+If you find mistakes or have suggestions for improvement, please get in touch with me at peter@marklunds.com.
 
 ###################################################################
 #
@@ -99,10 +97,13 @@ sudo apt-get upgrade
 sudo apt-get install build-essential man
 
 ############################
-# Install Git
+# Install Git and Subversion
 ############################
 
 sudo apt-get install git-core
+
+# Install Subversion (not everyone uses Git, yet)
+sudo apt-get install subversion subversion-tools
 
 ############################
 # Setup deploy User Environment
@@ -170,6 +171,10 @@ ssh <name-of-your-server>
 #
 ###################################################################
 
+############################
+# Ruby
+############################
+
 # Install Ruby
 sudo apt-get install ruby-full
 # Check that Ruby is there
@@ -179,6 +184,10 @@ ruby -v
 #=> ruby 1.8.6 (2007-09-24 patchlevel 111) [i486-linux]
 ruby -ropenssl -rzlib -rreadline -e "puts :success"
 #=> success
+
+############################
+# RubyGems
+############################
 
 # Install RubyGems
 cd /usr/local/src
@@ -192,6 +201,10 @@ which gem
 #=> /usr/bin/gem
 gem --version
 #=> 1.2.0
+
+############################
+# MySQL
+############################
 
 # Install MySQL
 sudo aptitude install mysql-server mysql-client libmysqlclient15-dev
@@ -208,11 +221,16 @@ exit
 sudo apt-get install make
 sudo gem install mysql
 
+############################
+# Ruby Gems that we Need
+############################
+
 # Install a few gems used in Rails deployment
 sudo gem install --no-rdoc --no-ri rake rails capistrano mongrel_cluster
 
-# Install Subversion (not everyone uses Git, yet)
-sudo apt-get install subversion subversion-tools
+############################
+# Nginx
+############################
 
 # Install Nginx with Fair Proxy Balancer
 sudo apt-get install libpcre3-dev libpcre3 openssl libssl-dev
@@ -229,9 +247,6 @@ sudo make install
 which nginx
 #=> /usr/local/nginx/sbin/nginx
 
-# Install Postfix so we can send SMTP from localhost
-sudo apt-get install postfix
-
 # Configure Nginx and start it
 sudo cp ~/rails-on-ubuntu/nginx/nginx.conf /usr/local/nginx/conf
 sudo cp -r ~/rails-on-ubuntu/nginx/vhosts /usr/local/nginx/conf
@@ -239,6 +254,17 @@ sudo cp ~/rails-on-ubuntu/nginx/nginx.init /etc/init.d/nginx
 sudo chmod +x /etc/init.d/nginx
 sudo /usr/sbin/update-rc.d -f nginx defaults
 sudo /etc/init.d/nginx start
+
+############################
+# Sending SMTP from localhost
+############################
+
+# Install Postfix so we can send SMTP from localhost
+sudo apt-get install postfix
+
+############################
+# Monit
+############################
 
 # Monit - install, configure, and start
 sudo apt-get install monit
@@ -262,6 +288,10 @@ sudo monit status
 #
 ###################################################################
 
+############################
+# Deployment Setup
+############################
+
 # Setup directory where your Rails app will be deployed to on the server
 sudo mkdir -p /var/www/apps
 sudo chown deploy.deploy /var/www/apps
@@ -275,6 +305,10 @@ cd <path-to-your-local-rails-app>
 # http://svn.marklunds.com/my_app/config/deploy.rb
 cap deploy:setup
 
+############################
+# Setup the database
+############################
+
 # Configure MySQL and create databases
 ssh <name-of-your-server>
 sudo /etc/init.d/mysql stop
@@ -282,6 +316,10 @@ sudo cp /etc/mysql/my.cnf /etc/mysql/my.cnf.orig
 sudo cp ~/rails-on-ubuntu/my.cnf /etc/mysql
 sudo /etc/init.d/mysql start
 mysqladmin -u root -pglr2008 create my_app_production
+
+############################
+# Deploy
+############################
 
 # Deploy cold from your local machine
 exit
@@ -295,5 +333,5 @@ Hit http://<your-server-ip-or-domain> in your browser.
 Good luck!
 
 Peter Marklund
-Friday, August 8, 2008
+Friday, August 10, 2008
 Stockholm
